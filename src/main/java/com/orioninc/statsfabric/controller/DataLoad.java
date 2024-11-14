@@ -15,7 +15,7 @@ public class DataLoad {
 
     @GetMapping("/upload")
     public Boolean uploade(@RequestParam String file) {
-        try (FileInputStream fis = new FileInputStream(Constant.directory+file)) {
+        try (FileInputStream fis = new FileInputStream(Constant.DIRECTORY+file)) {
             Workbook wb = new XSSFWorkbook(fis);
         } catch (IOException e) {
             e.printStackTrace();
