@@ -18,7 +18,6 @@ public class DataLoad {
         try (FileInputStream fis = new FileInputStream(Constant.DIRECTORY+file)) {
             Workbook wb = new XSSFWorkbook(fis);
         } catch (IOException e) {
-            e.printStackTrace();
             return false;
         }
         return true;

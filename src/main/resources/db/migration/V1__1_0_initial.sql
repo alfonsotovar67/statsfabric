@@ -1,8 +1,4 @@
-CREATE SCHEMA IF NOT EXISTS aeromexico;
-
-use aeromexico;
-
-CREATE TABLE `userhistories` (
+CREATE TABLE IF NOT EXISTS `userhistories` (
   `id` int NOT NULL,
   `Resumen` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Resumen',
   `issueId` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Clave de incidencia',

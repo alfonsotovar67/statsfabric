@@ -52,12 +52,18 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<version>3.4.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>3.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -72,6 +78,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 			<artifactId>commons-vfs2</artifactId>
 			<version>2.9.0</version>
 		</dependency>
@@ -114,6 +126,16 @@
 			<artifactId>flyway-mysql</artifactId>
 			<version>10.17.0</version>
 		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<version>3.4.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -121,6 +143,20 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>10.17.0</version>
+				<configuration>
+					<url>jdbc:mysql://localhost:3306/aeromexico</url>
+					<user>atovar67</user>
+					<password>Jose301171%</password>
+					<locations>
+						<location>classpath:db/migration</location>
+					</locations>
+					<cleanDisabled>false</cleanDisabled>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
