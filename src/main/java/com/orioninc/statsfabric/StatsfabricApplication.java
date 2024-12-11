@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 //@ComponentScan("com.orioninc.statsfabric.configuration")
-@EnableJpaRepositories("com.orioninc.statsfabric.repositories")
+@EnableJpaRepositories("com.orioninc.statsfabric.repository")
 @EntityScan(basePackages = "com.orioninc.statsfabric.entities")
 public class StatsfabricApplication {
 

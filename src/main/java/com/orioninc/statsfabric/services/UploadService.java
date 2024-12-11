@@ -35,4 +35,10 @@ public class UploadService {
         }
         return dBFileld;
     }
+
+    public void updateData(Sheet sheet) {
+        for (Integer rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
+
+        }
+    }
 }
