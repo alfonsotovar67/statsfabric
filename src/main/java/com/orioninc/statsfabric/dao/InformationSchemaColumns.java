@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Data
 public class InformationSchemaColumns {
+    private String tableName;
     private String columnName;
     private String dataType;
 }

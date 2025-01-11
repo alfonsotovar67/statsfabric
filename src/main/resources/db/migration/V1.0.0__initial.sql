@@ -46,6 +46,14 @@ CREATE TABLE IF NOT EXISTS `user_histories` (
   `carryoverrecoverytime` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Carry Over Recovery Time)',
   `causeoferrer` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Cause of error)',
   `codingstartdate` datetime DEFAULT NULL COMMENT 'Campo personalizado (Coding start date)',
+  PRIMARY KEY (`id`),
+  KEY `userhistories_issueId_IDX` (`issueId`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE IF NOT EXISTS `user_histories2` (
+  `id` int NOT NULL,
+  `issueId` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Clave de incidencia',
   `complejidad` int DEFAULT NULL COMMENT 'Campo personalizado (Complejidad)',
   `componentsdor` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Components)',
   `comprometida` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Comprometida)',
@@ -56,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `user_histories` (
   `epicLink` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Epic Link)',
   `epiclinkresumen` varchar(100) DEFAULT NULL COMMENT 'Epic Link Resumen',
   `errorexpectedbehavior` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Error - Expected Behavior)',
-  `error Handling` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Error Handling)',
+  `errorHandling` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Error Handling)',
   `excepción` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Excepción)',
   `fechareadytoreview` datetime DEFAULT NULL COMMENT 'Campo personalizado (Fecha Ready to review)',
   `fechacompromiso` datetime DEFAULT NULL COMMENT 'Campo personalizado (Fecha compromiso)',
@@ -118,6 +126,14 @@ CREATE TABLE IF NOT EXISTS `user_histories` (
   `timeinDevRework` datetime DEFAULT NULL COMMENT 'Campo personalizado (Time in Dev Rework)\r\nSe debe hacer la conversion de string a 00d 00h 00m 00s',
   `timeinInProgress` datetime DEFAULT NULL COMMENT 'Campo personalizado (Time in In Progress)\r\nSe debe hacer la conversion de string a 00d 00h 00m 00s',
   `timeinOnHold` datetime DEFAULT NULL COMMENT 'Campo personalizado (Time in On Hold)\r\nHay que hacer la conversion de String a 00d 00k 00m 00s',
+  PRIMARY KEY (`id`),
+  KEY `userhistories_issueId_IDX` (`issueId`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+CREATE TABLE IF NOT EXISTS `user_histories3` (
+  `id` int NOT NULL,
+  `issueId` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Clave de incidencia',
   `tipodeDesarrollo` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Tipo de Desarrollo)',
   `uxDesignfigma` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (UX Design (figma))',
   `userStoryType` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (User Story Type)',

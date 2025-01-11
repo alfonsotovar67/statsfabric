@@ -19,26 +19,28 @@ public class UploadService {
         this.mapa = mapa;
     }
 
-
     public Map<Integer, InformationSchemaColumns> getDBHeaders(Sheet sh) {
         Row row = sh.getRow(0);
         Map<Integer, InformationSchemaColumns> dBFileld = new HashMap<>();
-        for (Integer cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
+        for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
             String comment = row.getCell(cellNum).getStringCellValue();
+            InformationSchemaColumns field;
             if (mapa.containsKey(comment)) {
-                InformationSchemaColumns field = mapa.get(comment);
-                dBFileld.put(cellNum, field);
+                field = mapa.get(comment);
             } else {
-                InformationSchemaColumns field = new InformationSchemaColumns(comment, null);
-                dBFileld.put(cellNum, field);
+                field = new InformationSchemaColumns(null, comment, null);
             }
+            dBFileld.put(cellNum, field);
         }
         return dBFileld;
     }
 
-    public void updateData(Sheet sheet) {
-        for (Integer rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
-
+    public void updateData(Sheet sheet, Map<Integer, InformationSchemaColumns> dBFileld) {
+        for (int rowNum = 0; rowNum < sheet.getLastRowNum(); rowNum++) {
+            for (int cellNum = 0; cellNum < sheet.getRow(rowNum).getLastCellNum(); cellNum++) {
+                String cellValue = sheet.getRow(rowNum).getCell(cellNum).getStringCellValue();
+                InformationSchemaColumns field = dBFileld.get(cellNum);
+            }
         }
     }
 }

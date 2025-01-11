@@ -28,14 +28,14 @@ public class UserHistoriesServices
 
         Map<String, InformationSchemaColumns> lista = new HashMap<>();
 
-        String query = "SELECT COLUMN_NAME, COLUMN_COMMENT, DATA_TYPE FROM information_schema.columns WHERE table_name='userhistories'";
+        String query = "select Table_name, COLUMN_NAME, COLUMN_COMMENT, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME like 'user_histories%' and table_schema = 'aeromexico' order by table_name, ordinal_position";
 
         try (Connection connection = DriverManager.getConnection(url, user, password);
              PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                InformationSchemaColumns informationSchemaColumns = new InformationSchemaColumns(resultSet.getString("COLUMN_NAME"),
+                InformationSchemaColumns informationSchemaColumns = new InformationSchemaColumns(resultSet.getString("TABLE_NAME"), resultSet.getString("COLUMN_NAME"),
                         resultSet.getString("DATA_TYPE"));
                 lista.put(resultSet.getString("COLUMN_COMMENT"), informationSchemaColumns);
             }
