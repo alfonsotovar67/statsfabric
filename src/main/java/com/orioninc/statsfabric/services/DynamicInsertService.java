@@ -10,9 +10,9 @@ import java.util.Map;
 
 @Service
 public class DynamicInsertService {
-    private static final String URL = "jdbc:mysql://localhost:3306/tu_base_de_datos";
-    private static final String USER = "tu_usuario";
-    private static final String PASSWORD = "tu_contraseña";
+    private static final String URL = "jdbc:mysql://localhost:3306/aeromexico";
+    private static final String USER = "root";
+    private static final String PASSWORD = "Jose301171%";
 
     public void insertarDinamicamente(String tabla, Map<String, Object> datos) throws SQLException {
         StringBuilder columnas = new StringBuilder();
@@ -25,7 +25,8 @@ public class DynamicInsertService {
         columnas.setLength(columnas.length() - 1);
         valores.setLength(valores.length() - 1);
         String sql = "INSERT INTO " + tabla + " (" + columnas + ") VALUES (" + valores + ")";
-        try (Connection conexion = DriverManager.getConnection(URL, USER, PASSWORD); PreparedStatement preparedStatement = conexion.prepareStatement(sql)) {
+        try (Connection conexion = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = conexion.prepareStatement(sql)) {
             int indice = 1;
             for (Object valor : datos.values()) {
                 preparedStatement.setObject(indice++, valor);

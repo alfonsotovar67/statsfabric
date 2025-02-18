@@ -30,7 +30,7 @@ public class DataLoad {
     }
 
     @GetMapping("/upload")
-    public Map<Integer, InformationSchemaColumns> uploade(@RequestParam String file) {
+    public Map<Integer, InformationSchemaColumns> upload(@RequestParam String file) {
 
         try (FileInputStream fis = new FileInputStream(Constant.DIRECTORY+file)) {
             Workbook wb = new XSSFWorkbook(fis);

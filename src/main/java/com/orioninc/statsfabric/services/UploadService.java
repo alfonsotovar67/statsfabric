@@ -28,7 +28,7 @@ public class UploadService {
             if (mapa.containsKey(comment)) {
                 field = mapa.get(comment);
             } else {
-                field = new InformationSchemaColumns(null, comment, null);
+                field = new InformationSchemaColumns(null, comment, null, null);
             }
             dBFileld.put(cellNum, field);
         }
@@ -40,6 +40,7 @@ public class UploadService {
             for (int cellNum = 0; cellNum < sheet.getRow(rowNum).getLastCellNum(); cellNum++) {
                 String cellValue = sheet.getRow(rowNum).getCell(cellNum).getStringCellValue();
                 InformationSchemaColumns field = dBFileld.get(cellNum);
+                field.setValue(cellValue);
             }
         }
     }

@@ -13,4 +13,5 @@ public class InformationSchemaColumns {
     private String tableName;
     private String columnName;
     private String dataType;
+    private String value;
 }
