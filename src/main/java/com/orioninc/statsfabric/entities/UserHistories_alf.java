@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class UserHistories {
+public class UserHistories_alf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -126,9 +126,9 @@ public class UserHistories {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userHistories2_id", referencedColumnName = "id")
-    private UserHistories2 userhistories2;
+    private UserHistories2_alf userhistories2Alf;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userHistories3_id", referencedColumnName = "id")
-    private UserHistories3 userhistories3;
+    private UserHistories3_alf userhistories3;
 }

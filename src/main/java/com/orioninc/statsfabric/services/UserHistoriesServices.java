@@ -36,7 +36,7 @@ public class UserHistoriesServices
 
             while (resultSet.next()) {
                 InformationSchemaColumns informationSchemaColumns = new InformationSchemaColumns(resultSet.getString("TABLE_NAME"), resultSet.getString("COLUMN_NAME"),
-                        resultSet.getString("DATA_TYPE"), null);
+                        resultSet.getString("DATA_TYPE"));
                 lista.put(resultSet.getString("COLUMN_COMMENT"), informationSchemaColumns);
             }
         } catch (SQLException e) {

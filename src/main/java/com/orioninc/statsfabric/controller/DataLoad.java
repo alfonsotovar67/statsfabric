@@ -1,7 +1,6 @@
 package com.orioninc.statsfabric.controller;
 
 import com.orioninc.statsfabric.constant.Constant;
-import com.orioninc.statsfabric.dao.InformationSchemaColumns;
 import com.orioninc.statsfabric.services.UploadService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 public class DataLoad {
@@ -30,17 +27,16 @@ public class DataLoad {
     }
 
     @GetMapping("/upload")
-    public Map<Integer, InformationSchemaColumns> upload(@RequestParam String file) {
+    public String upload(@RequestParam String file) {
 
         try (FileInputStream fis = new FileInputStream(Constant.DIRECTORY+file)) {
             Workbook wb = new XSSFWorkbook(fis);
             Sheet sh = wb.getSheetAt(0);
-            Map<Integer, InformationSchemaColumns> dBFileld = uploadService.getDBHeaders(sh);
-            return dBFileld;
+            return uploadService.uploadFile(sh);
         } catch (Exception e) {
             log.error("Error al cargar el archivo: " + e.getMessage());
             e.printStackTrace();
-            return new HashMap<>();
+            return "Error al cargar el archivo";
         }
     }
 }

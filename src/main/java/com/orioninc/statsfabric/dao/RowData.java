@@ -1,16 +1,17 @@
 package com.orioninc.statsfabric.dao;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 @Data
-public class InformationSchemaColumns {
+public class RowData {
     private String tableName;
     private String columnName;
     private String dataType;
+    private Object value;
 }

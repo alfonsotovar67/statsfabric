@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class UserHistories2 {
+public class UserHistories2_alf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String issueId;
+    private String issueid;
     private int complejidad;
     private String componentsdor;
     private String comprometida;
@@ -97,9 +97,9 @@ public class UserHistories2 {
     private LocalDateTime startdate;
 
     @Column(columnDefinition = "DATETIME")
-    private LocalDateTime storyPointReestimation;
-    private int storyPoints;
-    private int storyPointsQA;
+    private LocalDateTime storypointreestimation;
+    private int storypoints;
+    private int storypointsQA;
     private String technicalLead;
     private String technicalSolution;
     private String technicalSolutionDetail;
