@@ -83,7 +83,11 @@ public class UploadService {
                     if (cell != null) {
                         Object cellValue = null;
                         switch (cell.getCellType()) {
-                            case STRING -> cellValue = cell.getStringCellValue();
+                            case STRING -> {
+                                String valor = cell.getStringCellValue() == null ? "" : cell.getStringCellValue().toString();
+                                valor = valor.replace("\"", "´");
+                                cellValue = valor;
+                            }
                             case NUMERIC -> {
                                 if (DateUtil.isCellDateFormatted(cell)) {
                                     cellValue = cell.getLocalDateTimeCellValue();
@@ -97,6 +101,7 @@ public class UploadService {
                             case ERROR -> cellValue = cell.getErrorCellValue();
                             default -> System.out.println("Tipo de celda desconocido");
                         }
+
                         if (field.getDataType().equals("json")) {
                             String datos = rowDataMap.get(field.getTableName() + field.getColumnName()) == null ? "" : rowDataMap.get(field.getTableName() + field.getColumnName()).getValue().toString();
                             rowData.setValue(getJsonString(field.getColumnName(), datos, cellValue));
@@ -109,7 +114,13 @@ public class UploadService {
                         if (rowData.getColumnName().equals("issuecve")) {
                             issueCve = String.valueOf(cellValue);
                         }
-                        rowDataMap.put(rowData.getTableName() + rowData.getColumnName(), rowData);
+                        if (!(rowData.getColumnName().equals("issuecve") || rowData.getColumnName().equals("comentario") || rowData.getColumnName().equals("technicalsolutiondetail"))) {
+                            rowDataMap.put(rowData.getTableName() + rowData.getColumnName(), rowData);
+                        }
+/*                        if (!(rowData.getColumnName().equals("issuecve") || rowData.getColumnName().equals("comentario") || rowData.getColumnName().equals("technicalsolutiondetail"))) {
+                            rowDataMap.put(rowData.getTableName() + rowData.getColumnName(), rowData);
+                        }
+*/
                     }
                 }
             }
