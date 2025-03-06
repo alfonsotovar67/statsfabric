@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -27,11 +28,16 @@ import java.util.stream.Collectors;
 @Service
 public class UploadService {
 
-    private static final Log log = LogFactory.getLog(UploadService.class);
+    @Value("${spring.datasource.url}")
+    private String url;
 
-    private static final String URL = "jdbc:mysql://localhost:3306/aeromexico";
-    private static final String USER = "root";
-    private static final String PASSWORD = "Jose301171%";
+    @Value("${spring.datasource.username}")
+    private String user;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    private static final Log log = LogFactory.getLog(UploadService.class);
 
     private int successrows = 0;
     private int errorrows = 0;
@@ -114,13 +120,9 @@ public class UploadService {
                         if (rowData.getColumnName().equals("issuecve")) {
                             issueCve = String.valueOf(cellValue);
                         }
-                        if (!(rowData.getColumnName().equals("issuecve") || rowData.getColumnName().equals("comentario") || rowData.getColumnName().equals("technicalsolutiondetail"))) {
+                        if (!(rowData.getColumnName().equals("issuecve"))) {
                             rowDataMap.put(rowData.getTableName() + rowData.getColumnName(), rowData);
                         }
-/*                        if (!(rowData.getColumnName().equals("issuecve") || rowData.getColumnName().equals("comentario") || rowData.getColumnName().equals("technicalsolutiondetail"))) {
-                            rowDataMap.put(rowData.getTableName() + rowData.getColumnName(), rowData);
-                        }
-*/
                     }
                 }
             }
@@ -135,8 +137,8 @@ public class UploadService {
 
         Contenedor contenedor = new Contenedor();
 
-        if (issueCve != null && issueCve.equals("AR-2175")) {
-            System.out.println("AR-2175");
+        if (issueCve != null && issueCve.equals("AR-1372")) {
+            System.out.println("AR-1372");
         }
         rowDataMap.forEach((columna, rowData) -> {
             if (!rowData.getTableName().equals(contenedor.tabla)) {
@@ -269,7 +271,7 @@ public class UploadService {
     private Connection getDBConnection() {
         Connection conexion = null;
         try {
-            conexion = DriverManager.getConnection(URL, USER, PASSWORD);
+            conexion = DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
             e.printStackTrace();
         }

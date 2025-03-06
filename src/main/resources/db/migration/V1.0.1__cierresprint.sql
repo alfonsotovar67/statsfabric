@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `user_histories` (
+CREATE TABLE IF NOT EXISTS `cierresprint1` (
   `id` int NOT NULL AUTO_INCREMENT,
   `resumen` varchar(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Resumen',
   `issuecve` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Clave de incidencia',
@@ -56,10 +56,10 @@ CREATE TABLE IF NOT EXISTS `user_histories` (
   `codequality` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Code_quality)',
   `codingstartdate` datetime DEFAULT NULL COMMENT 'Campo personalizado (Coding start date)',
   PRIMARY KEY (`id`),
-  KEY `userhistories_issueid_IDX` (`issuecve`) USING BTREE
+  KEY `cierresprint1_issueid_IDX` (`issuecve`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `user_histories2` (
+CREATE TABLE IF NOT EXISTS `cierresprint2` (
   `id` int NOT NULL AUTO_INCREMENT,
   `issuecve` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Clave de incidencia',
   `complejidad` int DEFAULT NULL COMMENT 'Campo personalizado (Complejidad)',
@@ -153,11 +153,11 @@ CREATE TABLE IF NOT EXISTS `user_histories2` (
   `timeininprogress` varchar(20) DEFAULT NULL COMMENT 'Campo personalizado (Time in In Progress)',
   `timeinonhold` varchar(20) DEFAULT NULL COMMENT 'Campo personalizado (Time in On Hold)',
   PRIMARY KEY (`id`),
-  KEY `userhistories2_issueid_IDX` (`issuecve`) USING BTREE
+  KEY `cierresprint2_issueid_IDX` (`issuecve`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
-CREATE TABLE IF NOT EXISTS `user_histories3` (
+CREATE TABLE IF NOT EXISTS `cierresprint3` (
   `id` int NOT NULL AUTO_INCREMENT,
   `issuecve` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Clave de incidencia',
   `tipodefesarrollo` varchar(100) DEFAULT NULL COMMENT 'Campo personalizado (Tipo de Desarrollo)',
@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `user_histories3` (
   `principal` varchar(100) DEFAULT NULL COMMENT 'Principal',
   `parentsummary` varchar(100) DEFAULT NULL COMMENT 'Parent summary',
   PRIMARY KEY (`id`),
-  KEY `userhistories3_issueId_IDX` (`issueCve`) USING BTREE
+  KEY `cierresprint3_issueId_IDX` (`issueCve`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE INDEX idx_sprintactual ON user_histories2(sprintactual);
+CREATE INDEX idx_sprintactualcierre ON user_histories2(sprintactual);
