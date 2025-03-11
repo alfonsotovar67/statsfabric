@@ -50,7 +50,7 @@ public class UploadService {
         this.mapa = mapa;
     }
 
-    public String uploadFile(Sheet sh) {
+    public String uploadFile(Sheet sh) throws NullPointerException {
         Map<Integer, InformationSchemaColumns> dBFileld = getDBHeaders(sh);
         Connection conexion = getDBConnection();
         String resultado = setValuesToRow(sh, dBFileld, conexion);
@@ -78,6 +78,7 @@ public class UploadService {
         successrows = 0;
         errorrows = 0;
         System.out.println("Número de filas: " + sheet.getLastRowNum());
+        Cell temp = sheet.getRow(0).getCell(0);
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Map<String, RowData> rowDataMap = new TreeMap<>();
             String issueCve = null;
@@ -90,7 +91,7 @@ public class UploadService {
                         Object cellValue = null;
                         switch (cell.getCellType()) {
                             case STRING -> {
-                                String valor = cell.getStringCellValue() == null ? "" : cell.getStringCellValue().toString();
+                                String valor = cell.getStringCellValue() == null ? "" : cell.getStringCellValue();
                                 valor = valor.replace("\"", "´");
                                 cellValue = valor;
                             }
@@ -137,9 +138,6 @@ public class UploadService {
 
         Contenedor contenedor = new Contenedor();
 
-        if (issueCve != null && issueCve.equals("AR-1372")) {
-            System.out.println("AR-1372");
-        }
         rowDataMap.forEach((columna, rowData) -> {
             if (!rowData.getTableName().equals(contenedor.tabla)) {
                 if (contenedor.tabla != null) {
