@@ -6,8 +6,10 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
 
-public class fechas {
+public class Fechas {
 
+    private Fechas() {
+    }
 
     public static double restarFechasSinFinesDeSemana(String fechaInicioStr, String fechaFinStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -29,6 +31,6 @@ public class fechas {
             fechaInicio = fechaInicio.plusDays(1).withHour(0).withMinute(0).withSecond(0);
         }
 
-        return (double) segundosTotales;
+        return segundosTotales;
     }
 }

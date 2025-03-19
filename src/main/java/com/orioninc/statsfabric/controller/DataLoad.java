@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
 
 @RestController
 public class DataLoad {
@@ -38,8 +39,7 @@ public class DataLoad {
             Sheet sh = wb.getSheetAt(0);
             return uploadService.uploadFile(sh);
         } catch (Exception e) {
-            log.error("Error al cargar el archivo: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error al cargar el archivo: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             return "Error al cargar el archivo";
         }
     }
@@ -50,8 +50,7 @@ public class DataLoad {
             sprintService.closeSprint(sprint, pod, "cierresprint");
             return "Sprint cerrado";
         } catch (Exception e) {
-            log.error("Error al cerrar el sprint: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error al cerrar el sprint: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             return "Error al cerrar el sprint";
         }
     }
@@ -62,8 +61,7 @@ public class DataLoad {
             sprintService.closeSprint(sprint, pod, "opensprint");
             return "Sprint abierto";
         } catch (Exception e) {
-            log.error("Error al cerrar el sprint: " + e.getMessage());
-            e.printStackTrace();
+            log.error("Error al cerrar el sprint: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
             return "Error al cerrar el sprint";
         }
     }
