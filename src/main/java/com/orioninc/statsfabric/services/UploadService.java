@@ -19,11 +19,10 @@ import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Service
 public class UploadService {
@@ -39,250 +38,233 @@ public class UploadService {
 
     private static final Log log = LogFactory.getLog(UploadService.class);
 
-    private int successrows = 0;
-    private int errorrows = 0;
-
-
-    final Map<String, InformationSchemaColumns> mapa;
+    private final Map<String, InformationSchemaColumns> schemaColumnsMap;
+    private int successRows = 0;
+    private int errorRows = 0;
 
     @Autowired
-    public UploadService(Map<String, InformationSchemaColumns> mapa) {
-        this.mapa = mapa;
+    public UploadService(Map<String, InformationSchemaColumns> schemaColumnsMap) {
+        this.schemaColumnsMap = schemaColumnsMap;
     }
 
-    public String uploadFile(Sheet sh) throws NullPointerException {
-        Map<Integer, InformationSchemaColumns> dBFileld = getDBHeaders(sh);
-        Connection conexion = getDBConnection();
-        String resultado = setValuesToRow(sh, dBFileld, conexion);
-        closeDBConnection(conexion);
-        return resultado;
-    }
-
-    public Map<Integer, InformationSchemaColumns> getDBHeaders(Sheet sh) {
-        Row row = sh.getRow(0);
-        Map<Integer, InformationSchemaColumns> dBFileld = new HashMap<>();
-        for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
-            String comment = row.getCell(cellNum).getStringCellValue();
-            InformationSchemaColumns field;
-            if (mapa.containsKey(comment)) {
-                field = mapa.get(comment);
-            } else {
-                field = new InformationSchemaColumns(null, comment, null);
-            }
-            dBFileld.put(cellNum, field);
+    public String uploadFile(Sheet sheet) {
+        Map<Integer, InformationSchemaColumns> dbFields = extractDBHeaders(sheet);
+        try (Connection connection = createDBConnection()) {
+            processSheetRows(sheet, dbFields, connection);
+        } catch (Exception e) {
+            log.error("Error closing the DB connection", e);
         }
-        return dBFileld;
+        return String.format("Records processed: %d, Records with errors: %d", successRows, errorRows);
     }
 
-    public String setValuesToRow(Sheet sheet, Map<Integer, InformationSchemaColumns> dBFileld, Connection conexion) {
-        successrows = 0;
-        errorrows = 0;
-        System.out.println("Número de filas: " + sheet.getLastRowNum());
-        Cell temp = sheet.getRow(0).getCell(0);
-        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
-            Map<String, RowData> rowDataMap = new TreeMap<>();
-            String issueCve = null;
-            for (int cellNum = 0; cellNum < sheet.getRow(rowNum).getLastCellNum(); cellNum++) {
-                RowData rowData = new RowData();
-                InformationSchemaColumns field = dBFileld.get(cellNum);
-                if (field.getTableName() != null) {
-                    Cell cell = sheet.getRow(rowNum).getCell(cellNum);
-                    if (cell != null) {
-                        Object cellValue = null;
-                        switch (cell.getCellType()) {
-                            case STRING -> {
-                                String valor = cell.getStringCellValue() == null ? "" : cell.getStringCellValue();
-                                valor = valor.replace("\"", "´");
-                                cellValue = valor;
-                            }
-                            case NUMERIC -> {
-                                if (DateUtil.isCellDateFormatted(cell)) {
-                                    cellValue = cell.getLocalDateTimeCellValue();
-                                } else {
-                                    cellValue = cell.getNumericCellValue();
-                                }
-                            }
-                            case BOOLEAN -> cellValue = cell.getBooleanCellValue();
-                            case FORMULA -> cellValue = cell.getBooleanCellValue();
-                            case BLANK -> cellValue = null;
-                            case ERROR -> cellValue = cell.getErrorCellValue();
-                            default -> System.out.println("Tipo de celda desconocido");
-                        }
+    private Map<Integer, InformationSchemaColumns> extractDBHeaders(Sheet sheet) {
+        Row headerRow = sheet.getRow(0);
+        Map<Integer, InformationSchemaColumns> dbFields = new HashMap<>();
+        for (int cellNum = 0; cellNum < headerRow.getLastCellNum(); cellNum++) {
+            String header = headerRow.getCell(cellNum).getStringCellValue();
+            InformationSchemaColumns field = schemaColumnsMap.getOrDefault(header, new InformationSchemaColumns(null, header, null));
+            dbFields.put(cellNum, field);
+        }
+        return dbFields;
+    }
 
-                        if (field.getDataType().equals("json")) {
-                            String datos = rowDataMap.get(field.getTableName() + field.getColumnName()) == null ? "" : rowDataMap.get(field.getTableName() + field.getColumnName()).getValue().toString();
-                            rowData.setValue(getJsonString(field.getColumnName(), datos, cellValue));
+    private void processSheetRows(Sheet sheet, Map<Integer, InformationSchemaColumns> dbFields, Connection connection) {
+        successRows = 0;
+        errorRows = 0;
+        log.info("Number of rows: " + sheet.getLastRowNum());
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            processRow(row, dbFields, connection, rowNum);
+        }
+        log.info("Records processed: " + successRows + ", Records with errors: " + errorRows);
+    }
+
+    private void processRow(Row row, Map<Integer, InformationSchemaColumns> dbFields, Connection connection, int rowNum) {
+        Map<String, RowData> rowDataMap = new TreeMap<>();
+        String issueCve = null;
+        try {
+            for (int cellNum = 0; cellNum < row.getLastCellNum(); cellNum++) {
+                Cell cell = row.getCell(cellNum);
+                InformationSchemaColumns field = dbFields.get(cellNum);
+                if (field.getTableName() != null) {
+                    RowData rowData = extractCellData(cell, field, rowDataMap);
+                    if (rowData != null) {
+                        if ("issuecve".equals(rowData.getColumnName())) {
+                            issueCve = String.valueOf(rowData.getValue());
+                            log.info("Processing:" + issueCve + " Renglon: " + rowNum);
                         } else {
-                            rowData.setValue(cellValue);
-                        }
-                        rowData.setDataType(field.getDataType());
-                        rowData.setColumnName(field.getColumnName());
-                        rowData.setTableName(field.getTableName());
-                        if (rowData.getColumnName().equals("issuecve")) {
-                            issueCve = String.valueOf(cellValue);
-                        }
-                        if (!(rowData.getColumnName().equals("issuecve"))) {
                             rowDataMap.put(rowData.getTableName() + rowData.getColumnName(), rowData);
                         }
                     }
                 }
             }
-            updateRow(rowDataMap, issueCve, conexion);
+
+            if (!rowDataMap.isEmpty()) {
+                updateRowInDB(rowDataMap, issueCve, connection);
+            }
+        } catch (Exception e) {
+            log.error("Error processing row " + (rowNum + 1) + " issuecve :" + issueCve + " ", e);
+            errorRows++;
         }
-        log.info("Registros procesados: " + successrows + " Registros con error: " + errorrows);
-        return "Registros procesados: " + successrows + " Registros con error: " + errorrows;
     }
 
-    public void updateRow(Map<String, RowData> rowDataMap, String issueCve, Connection conexion) {
-        List<Map.Entry<String, RowData>> list = rowDataMap.entrySet().stream().collect(Collectors.toList());
+    private RowData extractCellData(Cell cell, InformationSchemaColumns field, Map<String, RowData> rowDataMap) {
+        if (cell == null) return null;
 
-        Contenedor contenedor = new Contenedor();
-
-        rowDataMap.forEach((columna, rowData) -> {
-            if (!rowData.getTableName().equals(contenedor.tabla)) {
-                if (contenedor.tabla != null) {
-                    // Eliminar la última coma
-                    contenedor.columnas.setLength(contenedor.columnas.length() - 1);
-                    contenedor.valores.setLength(contenedor.valores.length() - 1);
-                    String sql = "INSERT INTO " + contenedor.tabla + " (issuecve," + contenedor.columnas + ") VALUES (\"" + issueCve + "\"," + contenedor.valores + ")";
-                    String sqlget = "DELETE FROM " + contenedor.tabla + " WHERE issuecve=\"" + issueCve + "\"";
-
-                    try {
-                        PreparedStatement preparedStatement = conexion.prepareStatement(sqlget);
-                        preparedStatement.executeUpdate();
-                        preparedStatement.close();
-                        preparedStatement = conexion.prepareStatement(sql);
-                        preparedStatement.executeUpdate();
-                        preparedStatement.close();
-                        successrows++;
-                        log.info("issueCve Procesado: " + issueCve);
-                    } catch (Exception e) {
-                        log.error("issueCve: " + issueCve + "Error: " + e.getMessage());
-                        log.error("SQL: " + sql);
-                        errorrows++;
-                    }
-                }
-                contenedor.columnas = new StringBuilder();
-                contenedor.valores = new StringBuilder();
-                contenedor.tabla = rowData.getTableName();
+        RowData rowData = new RowData();
+        Object cellValue = getCellValue(cell);
+        if ("json".equals(field.getDataType())) {
+            rowData = rowDataMap.get(field.getTableName() + field.getColumnName());
+            String existingData;
+            if (rowData == null) {
+                existingData = "";
+                rowData = new RowData();
             } else {
-                contenedor.columnas.append(rowData.getColumnName()).append(",");
-                switch (rowData.getDataType()) {
-                    case "int" -> contenedor.valores.append(Math.round((Double) rowData.getValue()) + ",");
-                    case "double" -> contenedor.valores.append((Double) rowData.getValue() + ",");
-                    case "datetime" -> contenedor.valores.append("\"" + getDateTime(rowData.getValue()) + "\",");
-                    case "json" -> contenedor.valores.append("\"" + rowData.getValue() + "\",");
-                    case "BOOLEAN" -> contenedor.valores.append(rowData.getValue() + ",");
-                    case "FORMULA" -> contenedor.valores.append("\"" + rowData.getValue() + "\",");
-                    case "BLANK" -> contenedor.valores.append("\"\",");
-                    case "ERROR" -> contenedor.valores.append("\"" + rowData.getValue() + "\",");
-                    default ->
-                            contenedor.valores.append("\"" + rowData.getValue().toString().replace("\"", "´") + "\",");
-                }
+                existingData = rowData.getValue() == null ? "" : rowData.getValue().toString();
             }
-        });
-        // Eliminar la última coma
-        contenedor.columnas.setLength(contenedor.columnas.length() - 1);
-        contenedor.valores.setLength(contenedor.valores.length() - 1);
-        String sql = "INSERT INTO " + contenedor.tabla + " (issueCve," + contenedor.columnas + ") VALUES (\"" + issueCve + "\"," + contenedor.valores + ")";
-        String sqlget = "DELETE FROM " + contenedor.tabla + " WHERE issueCve=\"" + issueCve + "\"";
+            rowData.setValue(getJsonString(field.getColumnName(), existingData, cellValue));
+        } else {
+            rowData.setValue(cellValue);
+        }
+        rowData.setDataType(field.getDataType());
+        rowData.setColumnName(field.getColumnName());
+        rowData.setTableName(field.getTableName());
+        return rowData;
+    }
 
-        try {
-            PreparedStatement preparedStatement = conexion.prepareStatement(sqlget);
+    private Object getCellValue(Cell cell) {
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue().replace("\"", "´");
+            case NUMERIC ->
+                    DateUtil.isCellDateFormatted(cell) ? cell.getLocalDateTimeCellValue() : cell.getNumericCellValue();
+            case BOOLEAN, FORMULA -> cell.getBooleanCellValue();
+            case BLANK -> null;
+            case ERROR -> cell.getErrorCellValue();
+            default -> {
+                log.error("Unknown cell type");
+                yield null;
+            }
+        };
+    }
+
+    private void updateRowInDB(Map<String, RowData> rowDataMap, String issueCve, Connection connection) {
+        Contenedor container = new Contenedor();
+        rowDataMap.forEach((column, rowData) -> {
+            if (!rowData.getTableName().equals(container.tabla)) {
+                if (container.tabla != null) {
+                    executeInsertQuery(container, issueCve, connection);
+                }
+                container.columnas = new StringBuilder();
+                container.valores = new StringBuilder();
+                container.tabla = rowData.getTableName();
+            }
+            appendColumnAndValue(container, rowData);
+        });
+        executeInsertQuery(container, issueCve, connection);
+    }
+
+    private void appendColumnAndValue(Contenedor container, RowData rowData) {
+        container.columnas.append(rowData.getColumnName()).append(",");
+        String value = formatValueForSQL(rowData);
+        container.valores.append(value).append(",");
+    }
+
+    private String formatValueForSQL(RowData rowData) {
+        return switch (rowData.getDataType()) {
+            case "int" -> String.valueOf(Math.round((Double) rowData.getValue()));
+            case "double", "BOOLEAN" -> String.valueOf(rowData.getValue());
+            case "datetime" -> "\"" + getDateTime(rowData.getValue()) + "\"";
+            case "json", "FORMULA", "BLANK", "ERROR" -> "\"" + rowData.getValue() + "\"";
+            default -> "\"" + rowData.getValue().toString().replace("\"", "´") + "\"";
+        };
+    }
+
+    private void executeInsertQuery(Contenedor container, String issueCve, Connection connection) {
+        if (!container.columnas.isEmpty() && !container.valores.isEmpty()) {
+            container.columnas.setLength(container.columnas.length() - 1);
+            container.valores.setLength(container.valores.length() - 1);
+
+            String deleteQuery = "DELETE FROM " + container.tabla + " WHERE issuecve=\"" + issueCve + "\"";
+            String insertQuery = "INSERT INTO " + container.tabla + " (issuecve," + container.columnas + ") VALUES (\"" + issueCve + "\"," + container.valores + ")";
+            executeSQL(deleteQuery, connection);
+            executeSQL(insertQuery, connection);
+            successRows++;
+        }
+    }
+
+    private void executeSQL(String query, Connection connection) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.executeUpdate();
-            preparedStatement.close();
-            preparedStatement = conexion.prepareStatement(sql);
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-            successrows++;
-            log.info("issueCve Procesado: " + issueCve);
         } catch (Exception e) {
-            log.error("issueCve: " + issueCve + "Error: " + e.getMessage());
-            log.error("SQL: " + sql);
-            errorrows++;
+            log.error("SQL Error: " + query + "\n" + Arrays.toString(e.getStackTrace()));
+            errorRows++;
         }
     }
 
     private String getDateTime(Object value) {
-        String fecha;
-        if (value == null) {
-            return null;
-        } else {
-            if (esLocalDateTimeValido(value.toString())) {
-                fecha = value.toString();
-            } else {
-                fecha = "20" + value.toString().substring(7, 9) + "-" + getMonth(value.toString().substring(3, 6)) + "-" + value.toString().substring(0, 2) + "T";
-                int hora = Integer.parseInt(value.toString().substring(10, value.toString().indexOf(":")));
-                if (hora == 12) {
-                    hora = 0;
-                }
-                if (value.toString().substring(value.toString().indexOf(":") + 4, value.toString().indexOf(":") + 6).equals("PM")) {
-                    hora = hora + 12;
-                    fecha = fecha + hora + ":" + value.toString().substring(value.toString().indexOf(":") + 1, value.toString().indexOf(":") + 3) + ":00.000";
-                } else {
-                    fecha = fecha + hora + ":" + value.toString().substring(value.toString().indexOf(":") + 1, value.toString().indexOf(":") + 3) + ":00.000";
-                }
-            }
+        if (value == null) return null;
+
+        String dateTimeStr = value.toString();
+        if (isValidLocalDateTime(dateTimeStr)) {
+            return dateTimeStr;
         }
-        return fecha;
+
+        String datePart = "20" + dateTimeStr.substring(7, 9) + "-" + getMonth(dateTimeStr.substring(3, 6)) + "-" + dateTimeStr.substring(0, 2);
+        int hour = Integer.parseInt(dateTimeStr.substring(10, dateTimeStr.indexOf(":")));
+        String amPm = dateTimeStr.substring(dateTimeStr.indexOf(":") + 4, dateTimeStr.indexOf(":") + 6);
+        if (amPm.equals("PM") && hour < 12) {
+            hour += 12;
+        }
+        if (amPm.equals("AM") && hour == 12) {
+            hour = 0;
+        }
+        String timePart = hour + ":" + dateTimeStr.substring(dateTimeStr.indexOf(":") + 1, dateTimeStr.indexOf(":") + 3) + ":00.000";
+        return datePart + "T" + timePart;
     }
 
-    private String getMonth(String monthStr) {
-        String month = "";
-        switch (monthStr) {
-            case "ene" -> month = "01";
-            case "feb" -> month = "02";
-            case "mar" -> month = "03";
-            case "abr" -> month = "04";
-            case "may" -> month = "05";
-            case "jun" -> month = "06";
-            case "jul" -> month = "07";
-            case "ago" -> month = "08";
-            case "sep" -> month = "09";
-            case "oct" -> month = "10";
-            case "nov" -> month = "11";
-            case "dic" -> month = "12";
-        }
-        return month;
-    }
-
-    private boolean esLocalDateTimeValido(String fechaHoraStr) {
+    private boolean isValidLocalDateTime(String dateTimeStr) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-            LocalDateTime.parse(fechaHoraStr, formatter);
+            LocalDateTime.parse(dateTimeStr, formatter);
             return true;
         } catch (DateTimeParseException e) {
             return false;
         }
     }
 
-    private String getJsonString(String columnName, String valor, Object value) {
-        if (valor != null && valor.length() > 0) {
-            valor = valor.substring(0, valor.length() - 2);
-            valor = valor + ",\\\"" + value.toString() + "\\\" ]}";
+    private String getMonth(String monthStr) {
+        return switch (monthStr) {
+            case "ene" -> "01";
+            case "feb" -> "02";
+            case "mar" -> "03";
+            case "abr" -> "04";
+            case "may" -> "05";
+            case "jun" -> "06";
+            case "jul" -> "07";
+            case "ago" -> "08";
+            case "sep" -> "09";
+            case "oct" -> "10";
+            case "nov" -> "11";
+            case "dic" -> "12";
+            default -> throw new IllegalArgumentException("Invalid month: " + monthStr);
+        };
+    }
+
+    private String getJsonString(String columnName, String existingData, Object newValue) {
+        if (existingData != null && !existingData.isEmpty()) {
+            existingData = existingData.substring(0, existingData.length() - 2);
+            return existingData + ",\\\"" + newValue.toString() + "\\\" ]}";
         } else {
-            valor = "{ \\\"" + columnName + "\\\":[\\\"" + value.toString() + " \\\" ]}";
+            return "{ \\\"" + columnName + "\\\":[\\\"" + newValue.toString() + " \\\" ]}";
         }
-        return valor;
     }
 
-    private Connection getDBConnection() {
-        Connection conexion = null;
+    private Connection createDBConnection() {
         try {
-            conexion = DriverManager.getConnection(url, user, password);
+            return DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return conexion;
-    }
-
-    private void closeDBConnection(Connection conexion) {
-        try {
-            conexion.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error creating DB connection", e);
+            return null;
         }
     }
-
 }
-

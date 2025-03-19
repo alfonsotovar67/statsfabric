@@ -25,7 +25,7 @@ public class InsertDao {
     Long carryoverdesviation;
     String carryoverrecoverytime;
     String codequality;
-    LocalDateTime fechaFinalización;
+    LocalDateTime fechaFinalizacion;
     LocalDateTime fechaupdatecomprometida;
     Long hoursindevreworks;
     Long hoursininprogress;
