@@ -46,4 +46,17 @@ public class InsertDao {
     String timeininprogress;
     String timeinonhold;
     String pod;
+    String businessdata;
+    String metrics;
+    String functionalrequirements;
+    String errorexpectedbehavior;
+    String uxdesignfigma;
+    String criteriaofacceptance;
+    String componentsdor;
+    String nonfunctionalrequirements;
+    String errorhandling;
+    String mitigateddependency;
+    String microservicescontract;
+    String testingstrategy;
+    String specialpnrgeneration;
 }

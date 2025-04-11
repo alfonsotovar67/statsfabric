@@ -49,7 +49,19 @@ public class Mapper {
         insertDao.setTimeininprogress(getString(resultSet, "timeininprogress"));
         insertDao.setTimeinonhold(getString(resultSet, "timeinonhold"));
         insertDao.setPod(getString(resultSet, "pod"));
-
+        insertDao.setBusinessdata(getString(resultSet, "businessdata"));
+        insertDao.setMetrics(getString(resultSet, "metrics"));
+        insertDao.setFunctionalrequirements(getString(resultSet, "functionalrequirements"));
+        insertDao.setErrorexpectedbehavior(getString(resultSet, "errorexpectedbehavior"));
+        insertDao.setUxdesignfigma(getString(resultSet, "uxdesignfigma"));
+        insertDao.setCriteriaofacceptance(getString(resultSet, "criteriaofacceptance"));
+        insertDao.setComponentsdor(getString(resultSet, "componentsdor"));
+        insertDao.setNonfunctionalrequirements(getString(resultSet, "nonfunctionalrequirements"));
+        insertDao.setErrorhandling(getString(resultSet, "errorhandling"));
+        insertDao.setMitigateddependency(getString(resultSet, "mitigateddependency"));
+        insertDao.setMicroservicescontract(getString(resultSet, "microservicescontract"));
+        insertDao.setTestingstrategy(getString(resultSet, "testingstrategy"));
+        insertDao.setSpecialpnrgeneration(getString(resultSet, "specialpnrgeneration"));
         return insertDao;
     }
 

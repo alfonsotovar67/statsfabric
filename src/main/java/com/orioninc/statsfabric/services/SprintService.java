@@ -65,14 +65,18 @@ public class SprintService {
                 "fechafinalización, fechaupdatecomprometida, hoursindevreworks, hoursininprogress, koursinonhold, " +
                 "kissrecoverytime, latechanges, leadtime, leadtimeforchangeshrs, sprint, sprintactual, sprintappactual, " +
                 "sprintappplanned, sprintenddate, sprintplanned, sprintstartdate, startdate, timeindevrework, " +
-                "timeininprogress, pod, timeinonhold " +
-                "FROM user_histories a, user_histories2 b " +
+                "timeininprogress, pod, timeinonhold, businessdata, metrics, functionalrequirements, errorexpectedbehavior, " +
+                "uxdesignfigma, criteriaofacceptance, componentsdor, nonfunctionalrequirements, errorhandling, mitigateddependency, " +
+                "microservicescontract, testingstrategy, specialpnrgeneration " +
+                "FROM user_histories a, user_histories2 b, user_histories3 c " +
                 "WHERE a.issuecve = b.issuecve " +
+                "and a.issuecve = c.issuecve " +
                 "AND a.issuecve NOT LIKE 'CVT%' " +
                 "AND sprint IS NOT NULL " +
                 "AND sprint LIKE ? " +
                 "AND STATE not in ('FINALIZADA','Cancelado') " +
                 "AND UPPER(pod) LIKE UPPER(?) " +
+                "AND cardtype is not null " +
                 "ORDER BY a.issuecve";
 
         try (PreparedStatement preparedStatement = conexion.prepareStatement(selectQuery)) {
@@ -81,6 +85,9 @@ public class SprintService {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     InsertDao insertDao = Mapper.maptoInsertDao(resultSet, maxSprintActualValue);
+                    if (insertDao.getCve().equals("AR-3557")) {
+                        System.out.println();
+                    }
                     insertData(conexion, table, insertDao, sprint);
                 }
             }
@@ -95,8 +102,11 @@ public class SprintService {
                 "carryoverrecoverytime, codequality, fechafinalización, fechaupdatecomprometida, hoursindevreworks, " +
                 "hoursininprogress, koursinonhold, kissrecoverytime, latechanges, leadtime, leadtimeforchangeshrs, " +
                 "sprint, sprintactual, sprintappactual, sprintappplanned, sprintenddate, sprintplanned, sprintstartdate, " +
-                "startdate, timeindevrework, timeininprogress, timeinonhold, pod, sprintactivo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
-                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "startdate, timeindevrework, timeininprogress, timeinonhold, pod, sprintactivo, businessdata, " +
+                "metrics, functionalrequirements, errorexpectedbehavior, uxdesignfigma, criteriaofacceptance, " +
+                "componentsdor, nonfunctionalrequirements, errorhandling, mitigateddependency, microservicescontract, " +
+                "testingstrategy, specialpnrgeneration) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, " +
+                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatementInsert = conexion.prepareStatement(queryInsert)) {
             preparedStatementInsert.setString(1, insertDao.getCve());
@@ -134,6 +144,19 @@ public class SprintService {
             preparedStatementInsert.setString(33, insertDao.getTimeinonhold());
             preparedStatementInsert.setString(34, insertDao.getPod());
             preparedStatementInsert.setString(35, sprintactivo);
+            preparedStatementInsert.setString(36, insertDao.getBusinessdata());
+            preparedStatementInsert.setString(37, insertDao.getMetrics());
+            preparedStatementInsert.setString(38, insertDao.getFunctionalrequirements());
+            preparedStatementInsert.setString(39, insertDao.getErrorexpectedbehavior());
+            preparedStatementInsert.setString(40, insertDao.getUxdesignfigma());
+            preparedStatementInsert.setString(41, insertDao.getCriteriaofacceptance());
+            preparedStatementInsert.setString(42, insertDao.getComponentsdor());
+            preparedStatementInsert.setString(43, insertDao.getNonfunctionalrequirements());
+            preparedStatementInsert.setString(44, insertDao.getErrorhandling());
+            preparedStatementInsert.setString(45, insertDao.getMitigateddependency());
+            preparedStatementInsert.setString(46, insertDao.getMicroservicescontract());
+            preparedStatementInsert.setString(47, insertDao.getTestingstrategy());
+            preparedStatementInsert.setString(48, insertDao.getSpecialpnrgeneration());
             preparedStatementInsert.executeUpdate();
         }
     }
