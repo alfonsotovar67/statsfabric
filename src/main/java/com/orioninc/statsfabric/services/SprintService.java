@@ -73,10 +73,11 @@ public class SprintService {
                 "and a.issuecve = c.issuecve " +
                 "AND a.issuecve NOT LIKE 'CVT%' " +
                 "AND sprint IS NOT NULL " +
+                "AND b.comprometida is not null " +
                 "AND sprint LIKE ? " +
                 "AND STATE not in ('FINALIZADA','Cancelado') " +
                 "AND UPPER(pod) LIKE UPPER(?) " +
-                "AND cardtype is not null " +
+                //"AND cardtype is not null " +
                 "ORDER BY a.issuecve";
 
         try (PreparedStatement preparedStatement = conexion.prepareStatement(selectQuery)) {
