@@ -16,7 +16,7 @@ public class CreaCierre {
 
     public void Cierre() {
         Workbook workbook = null;
-        FileInputStream fis = null;
+        //FileInputStream fis = null;
         FileOutputStream fos = null;
 
         // Ruta del archivo existente y la nueva ruta y nombre del archivo
@@ -27,10 +27,9 @@ public class CreaCierre {
             f.mkdir();
         }
         String inputFile = "./cierre/" + cierreFileName + ".xlsx"; // Ruta del archivo existente
-        String outputFile = "./resultado/ruta/" + Genera_FileName(cierreFileName); // Nueva ruta y nombre del archivo
+        String outputFile = "./resultado/ruta/" + generateFilename(cierreFileName); // Nueva ruta y nombre del archivo
 
-        try {
-            fis = new FileInputStream(inputFile);
+        try (FileInputStream fis = new FileInputStream(inputFile)) {
             workbook = new XSSFWorkbook(fis);
 
             fos = new FileOutputStream(outputFile);
@@ -42,9 +41,6 @@ public class CreaCierre {
                 if (workbook != null) {
                     workbook.close();
                 }
-                if (fis != null) {
-                    fis.close();
-                }
                 if (fos != null) {
                     fos.close();
                 }
@@ -54,9 +50,9 @@ public class CreaCierre {
         }
     }
 
-    private String Genera_FileName(String cierreFileName) {
+    private String generateFilename(String cierreFileName) {
         GregorianCalendar gc = new GregorianCalendar();
-        String fileName = "cierreFileName_" + gc.toZonedDateTime() + ".xlsx";
+        String fileName = cierreFileName + gc.toZonedDateTime() + ".xlsx";
         return fileName;
     }
 }

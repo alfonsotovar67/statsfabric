@@ -1,4 +1,4 @@
-package com.orioninc.statsfabric.dao;
+package com.orioninc.statsfabric.pojo;
 
 import lombok.Data;
 import lombok.Getter;

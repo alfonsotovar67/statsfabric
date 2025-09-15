@@ -1,0 +1,182 @@
+{
+  "issuecve": {
+    "headerName": "Clave de la tarjeta",
+    "alignment": "Center",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 10,
+    "fontHeight": 8
+  },
+  "pod": {
+    "headerName": "POD",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 15,
+    "fontHeight": 8
+  },
+  "resultado": {
+    "headerName": "Resultado",
+    "alignment": "GENERAL",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "Double",
+    "length": 15,
+    "fontHeight": 8
+  },
+  "issuetype": {
+    "headerName": "Tipo de Issue",
+    "alignment": "Center",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 6,
+    "fontHeight": 8
+  },
+  "Diferencia": {
+    "headerName": "Dias desde la creación del Issue",
+    "alignment": "GENERAL",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 10,
+    "fontHeight": 8
+  },
+  "Vencimiento": {
+    "headerName": "Para Trabajar / WARNING / Vencido",
+    "alignment": "Center",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 10,
+    "fontHeight": 8
+  },
+  "diasvencidos": {
+    "headerName": "Dias que ya se excedio de la solución",
+    "alignment": "GENERAL",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 10,
+    "fontHeight": 8
+  },
+  "diasporvencer": {
+    "headerName": "Dias que nos quedan para dar una solución",
+    "alignment": "GENERAL",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 10,
+    "fontHeight": 8
+  },
+  "resumen": {
+    "headerName": "Resumen del Issue",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 75,
+    "fontHeight": 8
+  },
+  "priority": {
+    "headerName": "Prioridad",
+    "alignment": "Center",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 10,
+    "fontHeight": 8
+  },
+  "assignperson": {
+    "headerName": "Persona Asignada",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 20,
+    "fontHeight": 8
+  },
+  "createddate": {
+    "headerName": "Fecha de Creación",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 17,
+    "fontHeight": 8
+  },
+  "state": {
+    "headerName": "Estado",
+    "alignment": "Center",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 14,
+    "fontHeight": 8
+  },
+  "component": {
+    "headerName": "Componente",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 25,
+    "fontHeight": 8
+  },
+  "resolución": {
+    "headerName": "Resolución",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 20,
+    "fontHeight": 8
+  },
+  "informador": {
+    "headerName": "Informador",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 20,
+    "fontHeight": 8
+  },
+  "eficiencia": {
+    "headerName": "Eficiencia",
+    "alignment": "LEFT",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "Percentage",
+    "length": 20,
+    "fontHeight": 8
+  },
+  "default": {
+    "headerName": "Sin definir",
+    "alignment": "GENERAL",
+    "border": "Thin",
+    "bold": false,
+    "italic": false,
+    "type": "String",
+    "length": 20,
+    "fontHeight": 25
+  }
+}

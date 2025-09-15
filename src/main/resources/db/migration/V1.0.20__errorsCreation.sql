@@ -1,0 +1,52 @@
+CREATE TABLE IF NOT EXISTS `erroresseatsprod` (
+  `ID` INT NOT NULL AUTO_INCREMENT,
+  `Tiempo` DATETIME DEFAULT NULL COMMENT 'Timestamp',
+  `AircraftType` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Aircraft Type',
+  `AppID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'App ID',
+  `AppName` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'App Name',
+  `AssignedSeat` TINYINT  DEFAULT NULL COMMENT 'Assigned Seat',
+  `BookingClass` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Booking Class',
+  `ChangeSeat` TINYINT DEFAULT NULL COMMENT 'Change Seat',
+  `Channel` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Channel',
+  `ClusterName` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Cluster Name',
+  `ContainerID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Container ID',
+  `ContainerName` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Container Name',
+  `FECHA` DATETIME DEFAULT NULL COMMENT 'Date Time',
+  `EntityGUID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Entity GUID',
+  `FareFamily` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Fare Family',
+  `Flow` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Flow',
+  `FlowAssigned` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Flow Assigned',
+  `Host` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Host',
+  `NamespaceName` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Namespace Name',
+  `NewSeat` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'New Seat',
+  `NodeName` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Node Name',
+  `OriginalSeat` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Original Seat',
+  `PassengerID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Passenger ID',
+  `PodName` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Pod Name',
+  `RealAgentID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Real Agent ID',
+  `RequestFrom` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Request From',
+  `ReservationCode` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Reservation Code',
+  `Rollback1` TINYINT DEFAULT NULL COMMENT 'Rollback',
+  `RollbackCause` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Rollback Cause',
+  `Route` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Route',
+  `SeatBenefit` TINYINT DEFAULT NULL COMMENT 'Seat Benefit',
+  `Tags.Account` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Tags.Account',
+  `Tags.AccountID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Tags.Account ID',
+  `Tags.TrustedAccountID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Tags.Trusted Account ID',
+  `TransactionID` VARCHAR(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Transaction ID',
+  `UnassignedSeat` TINYINT DEFAULT NULL COMMENT 'Unassigned Seat',
+  `Warnings` VARCHAR(2048) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT 'Warnings',
+  PRIMARY KEY (`ID`))
+COMMENT = 'Aparecen todos los errores en Prod de Asientos.';
+
+ALTER TABLE erroresseatsprod
+ADD CONSTRAINT chk_AssignedSeat CHECK (AssignedSeat IN (0, 1));
+
+ALTER TABLE erroresseatsprod
+ADD CONSTRAINT chk_ChangeSeat CHECK (ChangeSeat IN (0, 1));
+
+ALTER TABLE erroresseatsprod
+ADD CONSTRAINT chk_Rollback1 CHECK (Rollback1 IN (0, 1));
+
+ALTER TABLE erroresseatsprod
+ADD CONSTRAINT chk_UnassignedSeat CHECK (UnassignedSeat IN (0, 1));

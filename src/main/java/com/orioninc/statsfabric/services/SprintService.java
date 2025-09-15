@@ -1,6 +1,6 @@
 package com.orioninc.statsfabric.services;
 
-import com.orioninc.statsfabric.dao.InsertDao;
+import com.orioninc.statsfabric.pojo.InsertDao;
 import com.orioninc.statsfabric.utilities.Mapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
+import java.util.Arrays;
 
 @Service
 public class SprintService {
@@ -26,7 +27,9 @@ public class SprintService {
     public void closeSprint(String sprint, String pod, String table) throws SQLException {
         Connection conexion = getDBConnection();
         process(conexion, sprint, pod, table);
-        closeDBConnection(conexion);
+        if (conexion != null && !conexion.isClosed()) {
+            closeDBConnection(conexion);
+        }
     }
 
     public void process(Connection conexion, String sprint, String pod, String table) throws SQLException {
@@ -73,10 +76,11 @@ public class SprintService {
                 "and a.issuecve = c.issuecve " +
                 "AND a.issuecve NOT LIKE 'CVT%' " +
                 "AND sprint IS NOT NULL " +
-                "AND b.comprometida is not null " +
+                //"AND b.comprometida is not null " +
                 "AND sprint LIKE ? " +
                 "AND STATE not in ('FINALIZADA','Cancelado') " +
                 "AND UPPER(pod) LIKE UPPER(?) " +
+                "AND a.issuetype not in ('Defect','Subtarea') " +
                 //"AND cardtype is not null " +
                 "ORDER BY a.issuecve";
 
@@ -86,9 +90,6 @@ public class SprintService {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     InsertDao insertDao = Mapper.maptoInsertDao(resultSet, maxSprintActualValue);
-                    if (insertDao.getCve().equals("AR-3557")) {
-                        System.out.println();
-                    }
                     insertData(conexion, table, insertDao, sprint);
                 }
             }
@@ -167,7 +168,7 @@ public class SprintService {
         try {
             conexion = DriverManager.getConnection(url, user, password);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al conectar a la base de datos: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
         return conexion;
     }
@@ -176,7 +177,7 @@ public class SprintService {
         try {
             conexion.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error al cerrar la conexión a la base de datos: " + e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
         }
     }
 

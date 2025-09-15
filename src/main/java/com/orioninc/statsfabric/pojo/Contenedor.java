@@ -1,4 +1,4 @@
-package com.orioninc.statsfabric.dao;
+package com.orioninc.statsfabric.pojo;
 
 public class Contenedor {
     public StringBuilder columnas = null;

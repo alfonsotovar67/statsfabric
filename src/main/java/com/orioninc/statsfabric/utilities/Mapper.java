@@ -1,6 +1,6 @@
 package com.orioninc.statsfabric.utilities;
 
-import com.orioninc.statsfabric.dao.InsertDao;
+import com.orioninc.statsfabric.pojo.InsertDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
